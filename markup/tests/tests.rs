@@ -292,3 +292,11 @@ t! {
     },
     A { b: B { foo: 1, bar: '?' }.clone() } => "1?B { foo: 1, bar: '?' }",
 }
+
+t! {
+    t13,
+    {
+        A { element_with_underscores { it_works { "Y" } } }
+    },
+    A {} => "<element-with-underscores><it-works>Y</it-works></element-with-underscores>",
+}

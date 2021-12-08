@@ -120,8 +120,17 @@ impl Parse for Element {
         let (name, mut id, mut classes) = {
             let lookahead = input.lookahead1();
             if lookahead.peek(syn::Ident) {
-                let name: Ident = input.parse()?;
-                (name.to_string(), None, Vec::new())
+                let ident: Ident = input.parse()?;
+                let mut name = ident.to_string();
+                // Safety: The changes made to the bytes uphold the invariant that the String is
+                // valid UTF-8.
+                for byte in unsafe { name.as_bytes_mut() } {
+                    // Replace underscores with hyphens
+                    if *byte == b'_' {
+                        *byte = b'-';
+                    }
+                }
+                (name, None, Vec::new())
             } else if lookahead.peek(syn::Token![#]) {
                 let _: syn::Token![#] = input.parse()?;
                 (
